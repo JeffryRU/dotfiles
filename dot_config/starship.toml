@@ -1,0 +1,181 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# ~/.config/starship.toml
+#
+# Prompt minimalista de dos líneas. La primera línea da contexto (dónde estoy,
+# en qué rama, con qué runtime); la segunda es sólo para escribir.
+# Todo lo secundario —duración del comando, hora— vive a la derecha, atenuado.
+#
+#   ~/GitHub/dotfiles  main !2 ?1                        3s  14:32
+#   ❯
+
+add_newline = true
+palette = 'everforest'
+command_timeout = 1000
+scan_timeout = 30
+
+format = """
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$fill\
+$php\
+$nodejs\
+$python\
+$golang\
+$rust\
+$java\
+$docker_context\
+$cmd_duration\
+$time\
+$line_break\
+$character"""
+
+# ── Paleta ───────────────────────────────────────────────────────────────
+# Debe coincidir con dot_config/wezterm/colors.lua (Everforest dark medium).
+[palettes.everforest]
+fg     = '#d3c6aa'
+grey   = '#7a8478'
+grey2  = '#9da9a0'
+red    = '#e67e80'
+orange = '#e69875'
+yellow = '#dbbc7f'
+green  = '#a7c080'
+aqua   = '#83c092'
+blue   = '#7fbbb3'
+purple = '#d699b6'
+
+# ── Línea 1: contexto ────────────────────────────────────────────────────
+
+[directory]
+style = 'bold green'
+format = '[$path]($style)[$read_only]($read_only_style) '
+truncation_length = 3
+truncation_symbol = '…/'
+truncate_to_repo = true
+home_symbol = '~'
+use_os_path_sep = false   # '/' también en Windows: se lee más limpio
+read_only = ' '
+read_only_style = 'red'
+
+[git_branch]
+symbol = ' '
+format = '[$symbol$branch]($style) '
+style = 'purple'
+truncation_length = 24
+truncation_symbol = '…'
+
+[git_status]
+style = 'yellow'
+format = '([$all_status$ahead_behind]($style) )'
+conflicted = '='
+ahead = '⇡${count}'
+behind = '⇣${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+up_to_date = ''
+untracked = '?${count}'
+stashed = '\$${count}'
+modified = '!${count}'
+staged = '+${count}'
+renamed = '»${count}'
+deleted = '✘${count}'
+
+[git_state]
+style = 'orange'
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+# Empuja lo secundario al borde derecho de la ventana.
+[fill]
+symbol = ' '
+style = 'grey'
+
+# ── Runtimes: sólo aparecen en proyectos que los usan ────────────────────
+
+[php]
+symbol = ' '
+style = 'purple'
+format = '[$symbol($version )]($style)'
+
+[nodejs]
+symbol = ' '
+style = 'green'
+format = '[$symbol($version )]($style)'
+detect_files = ['package.json', '.node-version', '.nvmrc']
+
+[python]
+symbol = ' '
+style = 'yellow'
+format = '[$symbol($version )(\($virtualenv\) )]($style)'
+
+[golang]
+symbol = ' '
+style = 'blue'
+format = '[$symbol($version )]($style)'
+
+[rust]
+symbol = ' '
+style = 'orange'
+format = '[$symbol($version )]($style)'
+
+[java]
+symbol = ' '
+style = 'red'
+format = '[$symbol($version )]($style)'
+
+[docker_context]
+symbol = ' '
+style = 'blue'
+format = '[$symbol$context]($style) '
+only_with_files = true
+
+# ── Secundario: coste y hora ─────────────────────────────────────────────
+
+[cmd_duration]
+min_time = 2_000
+format = '[ $duration]($style) '
+style = 'grey'
+show_milliseconds = false
+
+[time]
+disabled = false
+format = '[$time]($style)'
+time_format = '%H:%M'
+style = 'grey'
+
+# ── Línea 2: sólo el cursor ──────────────────────────────────────────────
+
+[character]
+success_symbol = '[❯](green)'
+error_symbol = '[❯](red)'
+vimcmd_symbol = '[❮](aqua)'
+
+# ── Ruido apagado ────────────────────────────────────────────────────────
+# Un prompt minimalista se define sobre todo por lo que decide no mostrar.
+
+[package]
+disabled = true
+
+[username]
+disabled = true
+
+[hostname]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true
+
+[battery]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[status]
+disabled = true

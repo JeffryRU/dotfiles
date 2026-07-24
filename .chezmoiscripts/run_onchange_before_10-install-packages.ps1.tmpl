@@ -1,0 +1,38 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Instala las herramientas base en una máquina Windows nueva.
+# chezmoi vuelve a ejecutar este script sólo cuando cambia su contenido,
+# así que basta con editar la lista de abajo para añadir o quitar paquetes.
+#
+# paquetes: Git.Git twpayne.chezmoi Starship.Starship DEVCOM.JetBrainsMonoNerdFont wez.wezterm
+
+$ErrorActionPreference = 'Continue'
+
+$packages = @(
+    'Git.Git'
+    'twpayne.chezmoi'
+    'Starship.Starship'
+    'DEVCOM.JetBrainsMonoNerdFont'
+    'wez.wezterm'
+)
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Host 'winget no está disponible; instala las herramientas a mano.' -ForegroundColor Yellow
+    exit 0
+}
+
+$installed = (winget list --disable-interactivity --accept-source-agreements 2>$null) -join "`n"
+
+foreach ($pkg in $packages) {
+    if ($installed -match [regex]::Escape($pkg)) {
+        Write-Host "  ya instalado  $pkg" -ForegroundColor DarkGray
+        continue
+    }
+    Write-Host "  instalando    $pkg" -ForegroundColor Cyan
+    winget install --id $pkg --source winget `
+        --accept-package-agreements --accept-source-agreements `
+        --disable-interactivity 2>&1 | Out-Null
+}
+
+# El fallo de un paquete no debe abortar `chezmoi apply`.
+exit 0
+{{- end -}}
