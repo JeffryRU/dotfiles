@@ -95,11 +95,18 @@ PowerShell, para que las tres piezas sigan casando.
 En la cabecera de `dot_config/wezterm/ui.lua`:
 
 ```lua
-M.font_size = 11.5
-M.opacity   = 0.92   -- 1.0 = opaco; ~0.85 para más transparencia
-M.blur      = true   -- Acrylic de Windows 11
-M.blink     = true   -- cursor parpadeante
+M.font_size   = 11.5
+M.font_weight = 'Regular'  -- 'Medium' para texto con más cuerpo
+M.blink       = true       -- cursor parpadeante
+M.opacity     = 0.97       -- 1.0 = opaco
+M.blur        = false      -- Acrylic de Windows 11
 ```
+
+Sobre la transparencia: cada punto que bajas `M.opacity` mezcla el escritorio con
+**todo** lo que pinta la terminal, así que los colores que eligen los agentes
+dejan de ser los suyos. `0.97` se nota sin desteñir nada. El Acrylic difumina el
+fondo, pero desatura el contenido de forma muy visible en TUIs: por eso está
+apagado por defecto.
 
 ---
 

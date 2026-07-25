@@ -12,18 +12,25 @@ local M = {}
 -- ┌──────────────────────────────────────────────────────────────────────┐
 -- │ AJUSTES RÁPIDOS                                                      │
 -- └──────────────────────────────────────────────────────────────────────┘
-M.font_size = 11.5
-M.opacity   = 0.92    -- 1.0 = opaco. Baja a ~0.85 para más transparencia.
-M.blur      = true    -- Acrylic de Windows 11: difumina el fondo en vez de
-                      -- dejarlo pasar limpio; se lee mucho mejor.
-M.blink     = true    -- cursor parpadeante
+M.font_size   = 11.5
+M.font_weight = 'Regular'  -- 'Medium' si prefieres el texto con más cuerpo
+M.blink       = true       -- cursor parpadeante
+
+-- Transparencia: sutil a propósito. Cada punto que bajas mezcla el escritorio
+-- con TODO lo que pinta la terminal, así que los colores de los agentes dejan
+-- de ser los que ellos eligieron. 0.97 se nota sin desteñir nada.
+M.opacity = 0.97
+
+-- Acrylic (Windows 11) difumina el fondo, pero desatura el contenido de forma
+-- muy visible en TUIs. Desactivado por eso; actívalo si te gusta el efecto.
+M.blur = false
 
 function M.apply(config)
   local p = colors.palette()
 
   -- ── Tipografía ────────────────────────────────────────────────────────
   config.font = wezterm.font_with_fallback({
-    { family = 'JetBrainsMono Nerd Font', weight = 'Regular' },
+    { family = 'JetBrainsMono Nerd Font', weight = M.font_weight },
     { family = 'Cascadia Mono' },
     -- WezTerm incluye Symbols Nerd Font Mono de serie: los iconos del prompt
     -- se ven aunque la fuente principal no esté parcheada.
@@ -36,9 +43,11 @@ function M.apply(config)
   config.line_height = 1.1
   config.cell_width = 1.0
 
-  -- Renderizado más suave y menos "grueso" en pantallas Windows.
-  config.freetype_load_target = 'Light'
-  config.freetype_render_target = 'HorizontalLcd'
+  -- Antialiasing en escala de grises, con el hinting normal.
+  -- 'Light' adelgazaba el trazo y 'HorizontalLcd' (subpíxel) produce franjas
+  -- de color en cuanto la ventana tiene algo de transparencia.
+  config.freetype_load_target = 'Normal'
+  config.freetype_render_target = 'Normal'
 
   -- Los TUIs tipo agente usan bold sobre color como jerarquía visual.
   -- Con 'No' se aplanan y todo acaba pareciendo el mismo tono.
