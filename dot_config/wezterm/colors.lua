@@ -18,6 +18,12 @@ M.flavor = 'onedark'
 -- para forzar una variante concreta.
 M.appearance = 'auto'
 
+-- Fondo de la variante oscura. Un hex fuerza ese color; `nil` usa el del tema
+-- (One Dark trae un gris azulado, #282c34).
+-- Los tonos bg1..bg4 del tema se conservan tal cual: siguen siendo más claros
+-- que el negro, así que el hover de pestañas y la selección se siguen leyendo.
+M.background = '#000000'
+
 -- Cada paleta define los colores de UI (bg*, fg, grey*, rojo/verde/…) y,
 -- opcionalmente, `ansi` y `brights` explícitos. Merece la pena definirlos:
 -- los TUIs (opencode, claude code, herdr, pi) construyen su jerarquía visual
@@ -130,7 +136,17 @@ function M.palette()
     variant = (ok and appearance and appearance:find('Light')) and 'light' or 'dark'
   end
 
-  return set[variant] or set.dark, variant
+  local p = set[variant] or set.dark
+
+  -- Override del fondo, sólo en oscuro: en claro no tendría sentido.
+  if variant == 'dark' and M.background then
+    local copy = {}
+    for k, v in pairs(p) do copy[k] = v end
+    copy.bg0 = M.background
+    p = copy
+  end
+
+  return p, variant
 end
 
 --- Aplica los colores a la config de WezTerm.
