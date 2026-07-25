@@ -19,11 +19,10 @@ M.blink       = true       -- cursor parpadeante
 -- Transparencia: sutil a propósito. Cada punto que bajas mezcla el escritorio
 -- con TODO lo que pinta la terminal, así que los colores de los agentes dejan
 -- de ser los que ellos eligieron. 0.97 se nota sin desteñir nada.
-M.opacity = 0.97
+M.opacity = 0.85
 
--- Acrylic (Windows 11) difumina el fondo, pero desatura el contenido de forma
--- muy visible en TUIs. Desactivado por eso; actívalo si te gusta el efecto.
-M.blur = false
+-- Acrylic (Windows 11): difumina el fondo en vez de dejarlo pasar limpio.
+M.blur = true
 
 function M.apply(config)
   local p = colors.palette()
