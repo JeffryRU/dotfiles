@@ -2,15 +2,25 @@
 
 # ~/.config/starship.toml
 #
-# Prompt minimalista de dos líneas. La primera línea da contexto (dónde estoy,
-# en qué rama, con qué runtime); la segunda es sólo para escribir.
-# Todo lo secundario —duración del comando, hora— vive a la derecha, atenuado.
+# Prompt minimalista de dos líneas. La primera da contexto (dónde estoy, en qué
+# rama, con qué runtime); la segunda es sólo para escribir.
 #
-#   ~/GitHub/dotfiles  main !2 ?1                        3s  14:32
+#   ~/GitHub/dotfiles  main !2 ?1                          3s  14:32
 #   ❯
+#
+# ── Por qué no hay paleta de hex aquí ────────────────────────────────────
+# Los estilos usan NOMBRES ANSI (blue, purple, bright-black…), no hex. Así el
+# prompt hereda los 16 colores que define la terminal en
+# dot_config/wezterm/colors.lua, y con eso:
+#
+#   · Cambiar de tema es tocar UN sitio, no tres.
+#   · Al alternar claro/oscuro el prompt sigue solo.
+#   · En una terminal ajena (SSH, VS Code, CI) el prompt adopta SU paleta en
+#     vez de imponer unos hex que quizá no se lean sobre ese fondo.
+#
+# Es la recomendación habitual para prompts que viajan entre máquinas.
 
 add_newline = true
-palette = 'onedark'
 command_timeout = 1000
 scan_timeout = 30
 
@@ -31,20 +41,6 @@ $cmd_duration\
 $time\
 $line_break\
 $character"""
-
-# ── Paleta ───────────────────────────────────────────────────────────────
-# Debe coincidir con dot_config/wezterm/colors.lua (One Dark Pro).
-[palettes.onedark]
-fg     = '#abb2bf'
-grey   = '#5c6370'
-grey2  = '#828997'
-red    = '#e06c75'
-orange = '#d19a66'
-yellow = '#e5c07b'
-green  = '#98c379'
-aqua   = '#56b6c2'
-blue   = '#61afef'
-purple = '#c678dd'
 
 # ── Línea 1: contexto ────────────────────────────────────────────────────
 
@@ -82,13 +78,13 @@ renamed = '»${count}'
 deleted = '✘${count}'
 
 [git_state]
-style = 'orange'
+style = 'bright-yellow'
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
 # Empuja lo secundario al borde derecho de la ventana.
 [fill]
 symbol = ' '
-style = 'grey'
+style = 'bright-black'
 
 # ── Runtimes: sólo aparecen en proyectos que los usan ────────────────────
 
@@ -110,12 +106,12 @@ format = '[$symbol($version )(\($virtualenv\) )]($style)'
 
 [golang]
 symbol = ' '
-style = 'blue'
+style = 'cyan'
 format = '[$symbol($version )]($style)'
 
 [rust]
 symbol = ' '
-style = 'orange'
+style = 'red'
 format = '[$symbol($version )]($style)'
 
 [java]
@@ -134,21 +130,21 @@ only_with_files = true
 [cmd_duration]
 min_time = 2_000
 format = '[ $duration]($style) '
-style = 'grey'
+style = 'bright-black'
 show_milliseconds = false
 
 [time]
 disabled = false
 format = '[$time]($style)'
 time_format = '%H:%M'
-style = 'grey'
+style = 'bright-black'
 
 # ── Línea 2: sólo el cursor ──────────────────────────────────────────────
 
 [character]
 success_symbol = '[❯](green)'
 error_symbol = '[❯](red)'
-vimcmd_symbol = '[❮](aqua)'
+vimcmd_symbol = '[❮](cyan)'
 
 # ── Ruido apagado ────────────────────────────────────────────────────────
 # Un prompt minimalista se define sobre todo por lo que decide no mostrar.

@@ -20,8 +20,10 @@ M.appearance = 'auto'
 
 -- Fondo de la variante oscura. Un hex fuerza ese color; `nil` usa el del tema
 -- (One Dark trae un gris azulado, #282c34).
--- Los tonos bg1..bg4 del tema se conservan tal cual: siguen siendo más claros
--- que el negro, así que el hover de pestañas y la selección se siguen leyendo.
+--
+-- Al forzarlo, las superficies del cromo (bg1..bg4: barra de pestañas, hover,
+-- selección, divisores) se recalculan aclarando ESE color. Si no, seguirían
+-- siendo los grises azulados del tema y se verían azulados sobre negro.
 M.background = '#000000'
 
 -- Cada paleta define los colores de UI (bg*, fg, grey*, rojo/verde/…) y,
@@ -125,6 +127,16 @@ M.palettes = {
   },
 }
 
+--- Aclara un color '#rrggbb' sumando `amount` a cada canal.
+function M.lighten(hex, amount)
+  local function clamp(v) return math.max(0, math.min(255, v)) end
+  local r = tonumber(hex:sub(2, 3), 16)
+  local g = tonumber(hex:sub(4, 5), 16)
+  local b = tonumber(hex:sub(6, 7), 16)
+  return string.format('#%02x%02x%02x',
+    clamp(r + amount), clamp(g + amount), clamp(b + amount))
+end
+
 --- Devuelve la paleta activa según `M.flavor` y la apariencia del sistema.
 function M.palette()
   local set = M.palettes[M.flavor] or M.palettes['everforest']
@@ -142,7 +154,14 @@ function M.palette()
   if variant == 'dark' and M.background then
     local copy = {}
     for k, v in pairs(p) do copy[k] = v end
-    copy.bg0 = M.background
+    local bg = M.background
+    copy.bg0 = bg
+    copy.bg_dim = bg
+    copy.bg1 = M.lighten(bg, 13) -- barra de pestañas al pasar el ratón
+    copy.bg2 = M.lighten(bg, 22)
+    copy.bg3 = M.lighten(bg, 36) -- divisores entre paneles, scrollbar
+    copy.bg4 = M.lighten(bg, 51) -- selección de texto
+    copy.bg_visual = M.lighten(bg, 45)
     p = copy
   end
 

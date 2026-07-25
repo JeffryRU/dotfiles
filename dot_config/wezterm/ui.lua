@@ -16,13 +16,14 @@ M.font_size   = 11.5
 M.font_weight = 'Regular'  -- 'Medium' si prefieres el texto con más cuerpo
 M.blink       = true       -- cursor parpadeante
 
--- Transparencia: sutil a propósito. Cada punto que bajas mezcla el escritorio
--- con TODO lo que pinta la terminal, así que los colores de los agentes dejan
--- de ser los que ellos eligieron. 0.97 se nota sin desteñir nada.
-M.opacity = 0.85
+-- Opaco. Cualquier valor por debajo de 1.0 mezcla el escritorio con TODO lo
+-- que pinta la terminal: el negro deja de ser negro y los colores de los
+-- agentes dejan de ser los suyos. Súbelo/bájalo si quieres probar.
+M.opacity = 1.0
 
--- Acrylic (Windows 11): difumina el fondo en vez de dejarlo pasar limpio.
-M.blur = true
+-- Acrylic (Windows 11). Difumina bonito, pero es una capa de material por
+-- encima del contenido: desatura los TUIs de forma muy visible.
+M.blur = false
 
 function M.apply(config)
   local p = colors.palette()

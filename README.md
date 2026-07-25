@@ -84,9 +84,14 @@ y aplica: `chezmoi apply -v`. WezTerm recarga solo.
 Por defecto sigue la apariencia del sistema (claro de día, oscuro de noche).
 Para forzar una: `M.appearance = 'dark'` o `'light'`.
 
-Si cambias de tema, actualiza también la paleta de `dot_config/starship.toml`
-(bloque `[palettes.onedark]`) y el hashtable `$Palette` del perfil de
-PowerShell, para que las tres piezas sigan casando.
+**Sólo hay que tocar ese fichero.** El prompt y el perfil de PowerShell no
+declaran colores propios: usan *nombres de ranura* ANSI (`blue`, `purple`,
+`bright-black`…), así que heredan lo que defina la terminal. Un cambio de tema
+se propaga solo.
+
+Eso además hace que el prompt viaje bien: por SSH, en el terminal de VS Code o
+en CI adopta **la paleta de esa terminal** en vez de imponer unos hex que quizá
+no se lean sobre ese fondo.
 
 ---
 
@@ -98,8 +103,8 @@ En la cabecera de `dot_config/wezterm/ui.lua`:
 M.font_size   = 11.5
 M.font_weight = 'Regular'  -- 'Medium' para texto con más cuerpo
 M.blink       = true       -- cursor parpadeante
-M.opacity     = 0.85       -- 1.0 = opaco
-M.blur        = true       -- Acrylic de Windows 11
+M.opacity     = 1.0        -- 1.0 = opaco
+M.blur        = false      -- Acrylic de Windows 11
 ```
 
 Y en `dot_config/wezterm/colors.lua`:
@@ -109,10 +114,14 @@ M.background = '#000000'   -- nil para usar el fondo del tema (#282c34)
 ```
 
 Sobre la transparencia: cada punto que bajas `M.opacity` mezcla el escritorio con
-**todo** lo que pinta la terminal, así que los colores que eligen los agentes
-dejan de ser los suyos. `0.97` se nota sin desteñir nada. El Acrylic difumina el
-fondo, pero desatura el contenido de forma muy visible en TUIs: por eso está
-apagado por defecto.
+**todo** lo que pinta la terminal, así que el negro deja de ser negro y los
+colores que eligen los agentes dejan de ser los suyos. El Acrylic va aún más
+lejos: es una capa de material por encima del contenido, y desatura los TUIs de
+forma muy visible. Ambos apagados por defecto por eso.
+
+Al forzar `M.background`, las superficies del cromo (`bg1..bg4`: barra de
+pestañas, hover, selección, divisores) se recalculan aclarando ese color. Si no,
+seguirían siendo los grises azulados de One Dark y se verían azulados sobre negro.
 
 ---
 

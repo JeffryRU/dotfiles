@@ -21,39 +21,41 @@ $env:POWERSHELL_UPDATECHECK        = 'Off'
 $env:DOTNET_CLI_TELEMETRY_OPTOUT   = '1'
 if (-not $env:EDITOR) { $env:EDITOR = 'code' }
 
-# ── Paleta One Dark Pro ──────────────────────────────────────────────────
-# Misma que dot_config/wezterm/colors.lua y starship.toml.
+# ── Colores ──────────────────────────────────────────────────────────────
+# Códigos ANSI de las 16 ranuras, no valores hex. El perfil no impone una
+# paleta: usa las ranuras que define la terminal en
+# dot_config/wezterm/colors.lua. Terminal, prompt y shell comparten así una
+# única fuente de verdad, y en una terminal ajena (SSH, VS Code, CI) todo
+# adopta SU tema en vez de imponer unos hex que quizá no se lean allí.
 $Palette = @{
-    fg     = "`e[38;2;171;178;191m"   # #abb2bf
-    grey   = "`e[38;2;92;99;112m"     # #5c6370
-    grey2  = "`e[38;2;130;137;151m"   # #828997
-    red    = "`e[38;2;224;108;117m"   # #e06c75
-    orange = "`e[38;2;209;154;102m"   # #d19a66
-    yellow = "`e[38;2;229;192;123m"   # #e5c07b
-    green  = "`e[38;2;152;195;121m"   # #98c379
-    aqua   = "`e[38;2;86;182;194m"    # #56b6c2
-    blue   = "`e[38;2;97;175;239m"    # #61afef
-    purple = "`e[38;2;198;120;221m"   # #c678dd
-    dim    = "`e[38;2;75;82;99m"      # #4b5263
-    selBg  = "`e[48;2;62;68;81m"      # #3e4451
+    fg      = "`e[39m"    # primer plano por defecto
+    grey    = "`e[90m"    # bright black
+    red     = "`e[91m"
+    green   = "`e[92m"
+    yellow  = "`e[93m"
+    blue    = "`e[94m"
+    magenta = "`e[95m"
+    cyan    = "`e[96m"
+    orange  = "`e[33m"    # el yellow normal de One Dark tira a naranja
+    selBg   = "`e[100m"   # fondo bright black
 }
 
 # ── Colores de la salida de PowerShell ($PSStyle) ────────────────────────
 if ($PSStyle) {
     $PSStyle.Progress.View            = 'Minimal'
     $PSStyle.Formatting.Error         = $Palette.red
-    $PSStyle.Formatting.ErrorAccent   = $Palette.orange
+    $PSStyle.Formatting.ErrorAccent   = $Palette.cyan
     $PSStyle.Formatting.Warning       = $Palette.yellow
-    $PSStyle.Formatting.Verbose       = $Palette.aqua
-    $PSStyle.Formatting.Debug         = $Palette.purple
+    $PSStyle.Formatting.Verbose       = $Palette.cyan
+    $PSStyle.Formatting.Debug         = $Palette.magenta
     $PSStyle.Formatting.TableHeader   = $Palette.green
-    $PSStyle.Formatting.FormatAccent  = $Palette.grey2
+    $PSStyle.Formatting.FormatAccent  = $Palette.grey
 
-    $PSStyle.FileInfo.Directory       = "`e[1;38;2;97;175;239m"
-    $PSStyle.FileInfo.SymbolicLink    = $Palette.aqua
+    $PSStyle.FileInfo.Directory       = "`e[1;94m"   # azul brillante en negrita
+    $PSStyle.FileInfo.SymbolicLink    = $Palette.cyan
     $PSStyle.FileInfo.Executable      = $Palette.green
     foreach ($ext in '.zip', '.tar', '.gz', '.7z', '.rar') {
-        $PSStyle.FileInfo.Extension[$ext] = $Palette.purple
+        $PSStyle.FileInfo.Extension[$ext] = $Palette.magenta
     }
 }
 
@@ -80,15 +82,15 @@ if (Get-Module -ListAvailable -Name PSReadLine) {
         Comment                = $Palette.grey
         ContinuationPrompt     = $Palette.grey
         Default                = $Palette.fg
-        Emphasis               = $Palette.orange
+        Emphasis               = $Palette.cyan
         Error                  = $Palette.red
-        InlinePrediction       = $Palette.dim
-        Keyword                = $Palette.purple
+        InlinePrediction       = $Palette.grey
+        Keyword                = $Palette.magenta
         ListPrediction         = $Palette.grey
         ListPredictionSelected = $Palette.selBg + $Palette.fg
         Member                 = $Palette.fg
-        Number                 = $Palette.purple
-        Operator               = $Palette.aqua
+        Number                 = $Palette.magenta
+        Operator               = $Palette.cyan
         Parameter              = $Palette.blue
         Selection              = $Palette.selBg + $Palette.fg
         String                 = $Palette.yellow
