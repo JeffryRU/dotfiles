@@ -1,13 +1,22 @@
 -- ui.lua — Tipografía, ventana, renderizado y barra de pestañas.
 --
--- Criterio de diseño: todo lo que reduzca fatiga visual gana a lo que "se ve
--- llamativo". Sin transparencias, sin cursor parpadeante, sin blancos puros,
--- interlineado generoso y padding amplio.
+-- Criterio de diseño: que se vea bien y sea cómodo, sin sacrificar la
+-- legibilidad de los TUIs (opencode, claude code, herdr, pi), que dependen
+-- de que los 16 colores ANSI y el bold se rendericen con fuerza.
 
 local wezterm = require('wezterm')
 local colors = require('colors')
 
 local M = {}
+
+-- ┌──────────────────────────────────────────────────────────────────────┐
+-- │ AJUSTES RÁPIDOS                                                      │
+-- └──────────────────────────────────────────────────────────────────────┘
+M.font_size = 11.5
+M.opacity   = 0.92    -- 1.0 = opaco. Baja a ~0.85 para más transparencia.
+M.blur      = true    -- Acrylic de Windows 11: difumina el fondo en vez de
+                      -- dejarlo pasar limpio; se lee mucho mejor.
+M.blink     = true    -- cursor parpadeante
 
 function M.apply(config)
   local p = colors.palette()
@@ -21,18 +30,19 @@ function M.apply(config)
     { family = 'Symbols Nerd Font Mono', scale = 0.9 },
     { family = 'Segoe UI Emoji' },
   })
-  config.font_size = 11.5
+  config.font_size = M.font_size
 
   -- Interlineado ligeramente abierto: el texto "respira" y cansa menos.
-  config.line_height = 1.15
+  config.line_height = 1.1
   config.cell_width = 1.0
 
   -- Renderizado más suave y menos "grueso" en pantallas Windows.
   config.freetype_load_target = 'Light'
   config.freetype_render_target = 'HorizontalLcd'
 
-  -- Que la negrita no dispare los colores brillantes: mantiene la paleta apagada.
-  config.bold_brightens_ansi_colors = 'No'
+  -- Los TUIs tipo agente usan bold sobre color como jerarquía visual.
+  -- Con 'No' se aplanan y todo acaba pareciendo el mismo tono.
+  config.bold_brightens_ansi_colors = 'BrightAndBold'
 
   config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' }
   config.warn_about_missing_glyphs = false
@@ -48,7 +58,14 @@ function M.apply(config)
   config.initial_rows = 32
   config.window_close_confirmation = 'NeverPrompt'
   config.adjust_window_size_when_changing_font_size = false
-  config.window_background_opacity = 1.0 -- opaco: la transparencia baja el contraste
+
+  config.window_background_opacity = M.opacity
+  if M.blur then
+    config.win32_system_backdrop = 'Acrylic'
+  end
+  -- El fondo de cada celda sí es opaco: el texto de los TUIs se lee nítido
+  -- aunque la ventana sea translúcida.
+  config.text_background_opacity = 1.0
 
   -- ── Barra de pestañas ─────────────────────────────────────────────────
   config.use_fancy_tab_bar = true
@@ -60,31 +77,41 @@ function M.apply(config)
   config.switch_to_last_active_tab_when_closing_tab = true
 
   -- ── Paneles ───────────────────────────────────────────────────────────
-  -- El panel inactivo se atenúa: la vista sabe siempre dónde está el foco.
-  config.inactive_pane_hsb = { saturation = 0.85, brightness = 0.65 }
+  -- Atenuación suave del panel inactivo: marca el foco sin apagar la salida
+  -- de un agente que siga trabajando al lado.
+  config.inactive_pane_hsb = { saturation = 0.95, brightness = 0.85 }
 
   -- ── Cursor ────────────────────────────────────────────────────────────
-  -- Barra fija, sin parpadeo: el parpadeo es una fuente constante de fatiga.
-  config.default_cursor_style = 'SteadyBar'
-  config.cursor_blink_rate = 0
+  config.default_cursor_style = M.blink and 'BlinkingBlock' or 'SteadyBlock'
+  config.cursor_blink_rate = M.blink and 600 or 0
+  -- Parpadeo limpio, sin el fundido que deja el cursor a medio gas.
+  config.cursor_blink_ease_in = 'Constant'
+  config.cursor_blink_ease_out = 'Constant'
   config.cursor_thickness = 2
   config.force_reverse_video_cursor = false
 
   -- ── Comportamiento ────────────────────────────────────────────────────
-  config.scrollback_lines = 10000
+  -- Scrollback generoso: una sesión larga de agente escupe mucha salida.
+  config.scrollback_lines = 25000
   config.enable_scroll_bar = false
-  config.audible_bell = 'Disabled'
+  config.audible_bell = 'Disabled' -- la campana la marca el visual_bell
   config.check_for_updates = false
   config.automatically_reload_config = true
   config.exit_behavior = 'Close'
   config.use_dead_keys = false
   config.send_composed_key_when_left_alt_is_pressed = false
 
+  -- Protocolo de teclado de Kitty: permite a los TUIs distinguir
+  -- Shift+Enter, Ctrl+Enter y demás combinaciones que un terminal clásico
+  -- no sabe transmitir. Claude Code y opencode lo aprovechan.
+  config.enable_kitty_keyboard = true
+  config.enable_kitty_graphics = true
+
   -- ── Rendimiento ───────────────────────────────────────────────────────
   config.front_end = 'WebGpu'
   config.webgpu_power_preference = 'HighPerformance'
   config.max_fps = 120
-  config.animation_fps = 1 -- animaciones al mínimo: menos movimiento en pantalla
+  config.animation_fps = 60
 
   -- ── Selección con doble clic ──────────────────────────────────────────
   -- Rutas, flags y URLs se seleccionan enteras.

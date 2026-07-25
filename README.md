@@ -2,8 +2,10 @@
 
 Configuración de terminal para Windows, gestionada con [chezmoi](https://chezmoi.io).
 
-**WezTerm** + **PowerShell 7** + **Starship**, con paleta **Everforest** (medium).
-Diseño minimalista y de bajo contraste, pensado para sesiones largas sin cansar la vista.
+**WezTerm** + **PowerShell 7** + **Starship**, con paleta **One Dark Pro**.
+Diseño minimalista pero no monacal: transparencia con blur, cursor parpadeante y
+los 16 colores ANSI del tema intactos, para que los TUIs de agentes
+(opencode, claude code, herdr, pi) se vean como deben.
 
 ```
  ~/GitHub/dotfiles  main !2 ?1                             3s  14:32
@@ -74,7 +76,7 @@ Los cuatro temas vienen precargados. Edita una línea en
 `dot_config/wezterm/colors.lua`:
 
 ```lua
-M.flavor = 'everforest'   -- 'rose-pine' | 'gruvbox-material' | 'catppuccin'
+M.flavor = 'onedark'   -- 'everforest' | 'rose-pine' | 'gruvbox-material' | 'catppuccin'
 ```
 
 y aplica: `chezmoi apply -v`. WezTerm recarga solo.
@@ -83,28 +85,44 @@ Por defecto sigue la apariencia del sistema (claro de día, oscuro de noche).
 Para forzar una: `M.appearance = 'dark'` o `'light'`.
 
 Si cambias de tema, actualiza también la paleta de `dot_config/starship.toml`
-(bloque `[palettes.everforest]`) y el hashtable `$Everforest` del perfil de
+(bloque `[palettes.onedark]`) y el hashtable `$Palette` del perfil de
 PowerShell, para que las tres piezas sigan casando.
+
+---
+
+## Ajustes rápidos
+
+En la cabecera de `dot_config/wezterm/ui.lua`:
+
+```lua
+M.font_size = 11.5
+M.opacity   = 0.92   -- 1.0 = opaco; ~0.85 para más transparencia
+M.blur      = true   -- Acrylic de Windows 11
+M.blink     = true   -- cursor parpadeante
+```
 
 ---
 
 ## Decisiones de diseño
 
-Todo lo que sigue está elegido para reducir fatiga visual, no por estética:
-
-- **Everforest medium** — contraste fg/bg ≈ 8.5:1. Suficiente para leer, lejos del
-  blanco puro sobre negro puro que deslumbra.
-- **Sin transparencia** (`window_background_opacity = 1.0`) — el fondo translúcido
-  baja el contraste efectivo y obliga al ojo a trabajar más.
-- **Cursor fijo, sin parpadeo** (`SteadyBar`, `cursor_blink_rate = 0`) — el parpadeo
-  es un estímulo de movimiento constante en el punto donde más miras.
-- **`bold_brightens_ansi_colors = 'No'`** — la negrita no salta a los colores
-  brillantes; la paleta se mantiene apagada.
-- **`line_height = 1.15`** y padding de 18px — el texto respira.
-- **`animation_fps = 1`** — animaciones al mínimo.
-- **Sin campana** (`audible_bell = 'Disabled'`, `BellStyle None` en PSReadLine).
+- **One Dark Pro** — la misma paleta que uso en VS Code, así el editor y la
+  terminal no se pelean.
+- **Los 16 ANSI son los del tema**, no una derivación de los colores de UI.
+  Los TUIs de agentes construyen su jerarquía visual con esos 16 colores.
+- **`bold_brightens_ansi_colors = 'BrightAndBold'`** — sin esto, un TUI que use
+  bold sobre color se aplana y todo acaba pareciendo el mismo tono.
+- **`enable_kitty_keyboard`** — deja que los TUIs distingan `Shift+Enter` y
+  `Ctrl+Enter`, que un terminal clásico no sabe transmitir.
+- **Transparencia con blur** (`opacity 0.92` + Acrylic) — el Acrylic difumina lo
+  que hay detrás en vez de dejarlo pasar limpio, así que se lee bien.
+  `text_background_opacity = 1.0` mantiene opaco el fondo de cada celda.
+- **Scrollback de 25 000 líneas** — una sesión larga de agente escupe mucha salida.
+- **Atenuación suave del panel inactivo** (`brightness 0.85`) — marca el foco sin
+  apagar la salida de un agente que siga trabajando al lado.
 - **Prompt de dos líneas** — el comando siempre empieza en la misma columna,
   independientemente de lo larga que sea la ruta.
+- **Sin campana audible** — el aviso es el `visual_bell`, que hace un destello
+  breve en el cursor.
 
 ---
 

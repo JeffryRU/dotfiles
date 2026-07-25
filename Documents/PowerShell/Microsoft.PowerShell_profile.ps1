@@ -21,38 +21,39 @@ $env:POWERSHELL_UPDATECHECK        = 'Off'
 $env:DOTNET_CLI_TELEMETRY_OPTOUT   = '1'
 if (-not $env:EDITOR) { $env:EDITOR = 'code' }
 
-# ── Paleta Everforest ────────────────────────────────────────────────────
+# ── Paleta One Dark Pro ──────────────────────────────────────────────────
 # Misma que dot_config/wezterm/colors.lua y starship.toml.
-$Everforest = @{
-    fg     = "`e[38;2;211;198;170m"
-    grey   = "`e[38;2;122;132;120m"
-    grey2  = "`e[38;2;157;169;160m"
-    red    = "`e[38;2;230;126;128m"
-    orange = "`e[38;2;230;152;117m"
-    yellow = "`e[38;2;219;188;127m"
-    green  = "`e[38;2;167;192;128m"
-    aqua   = "`e[38;2;131;192;146m"
-    blue   = "`e[38;2;127;187;179m"
-    purple = "`e[38;2;214;153;182m"
-    selBg  = "`e[48;2;79;88;94m"
+$Palette = @{
+    fg     = "`e[38;2;171;178;191m"   # #abb2bf
+    grey   = "`e[38;2;92;99;112m"     # #5c6370
+    grey2  = "`e[38;2;130;137;151m"   # #828997
+    red    = "`e[38;2;224;108;117m"   # #e06c75
+    orange = "`e[38;2;209;154;102m"   # #d19a66
+    yellow = "`e[38;2;229;192;123m"   # #e5c07b
+    green  = "`e[38;2;152;195;121m"   # #98c379
+    aqua   = "`e[38;2;86;182;194m"    # #56b6c2
+    blue   = "`e[38;2;97;175;239m"    # #61afef
+    purple = "`e[38;2;198;120;221m"   # #c678dd
+    dim    = "`e[38;2;75;82;99m"      # #4b5263
+    selBg  = "`e[48;2;62;68;81m"      # #3e4451
 }
 
 # ── Colores de la salida de PowerShell ($PSStyle) ────────────────────────
 if ($PSStyle) {
     $PSStyle.Progress.View            = 'Minimal'
-    $PSStyle.Formatting.Error         = $Everforest.red
-    $PSStyle.Formatting.ErrorAccent   = $Everforest.orange
-    $PSStyle.Formatting.Warning       = $Everforest.yellow
-    $PSStyle.Formatting.Verbose       = $Everforest.aqua
-    $PSStyle.Formatting.Debug         = $Everforest.purple
-    $PSStyle.Formatting.TableHeader   = $Everforest.green
-    $PSStyle.Formatting.FormatAccent  = $Everforest.grey2
+    $PSStyle.Formatting.Error         = $Palette.red
+    $PSStyle.Formatting.ErrorAccent   = $Palette.orange
+    $PSStyle.Formatting.Warning       = $Palette.yellow
+    $PSStyle.Formatting.Verbose       = $Palette.aqua
+    $PSStyle.Formatting.Debug         = $Palette.purple
+    $PSStyle.Formatting.TableHeader   = $Palette.green
+    $PSStyle.Formatting.FormatAccent  = $Palette.grey2
 
-    $PSStyle.FileInfo.Directory       = "`e[1;38;2;127;187;179m"
-    $PSStyle.FileInfo.SymbolicLink    = $Everforest.aqua
-    $PSStyle.FileInfo.Executable      = $Everforest.green
+    $PSStyle.FileInfo.Directory       = "`e[1;38;2;97;175;239m"
+    $PSStyle.FileInfo.SymbolicLink    = $Palette.aqua
+    $PSStyle.FileInfo.Executable      = $Palette.green
     foreach ($ext in '.zip', '.tar', '.gz', '.7z', '.rar') {
-        $PSStyle.FileInfo.Extension[$ext] = $Everforest.purple
+        $PSStyle.FileInfo.Extension[$ext] = $Palette.purple
     }
 }
 
@@ -75,24 +76,24 @@ if (Get-Module -ListAvailable -Name PSReadLine) {
     }
 
     Set-PSReadLineOption -Colors @{
-        Command                = $Everforest.green
-        Comment                = $Everforest.grey
-        ContinuationPrompt     = $Everforest.grey
-        Default                = $Everforest.fg
-        Emphasis               = $Everforest.orange
-        Error                  = $Everforest.red
-        InlinePrediction       = "`e[38;2;86;99;95m"   # sugerencia muy tenue
-        Keyword                = $Everforest.purple
-        ListPrediction         = $Everforest.grey
-        ListPredictionSelected = $Everforest.selBg + $Everforest.fg
-        Member                 = $Everforest.fg
-        Number                 = $Everforest.purple
-        Operator               = $Everforest.aqua
-        Parameter              = $Everforest.blue
-        Selection              = $Everforest.selBg + $Everforest.fg
-        String                 = $Everforest.yellow
-        Type                   = $Everforest.orange
-        Variable               = $Everforest.fg
+        Command                = $Palette.green
+        Comment                = $Palette.grey
+        ContinuationPrompt     = $Palette.grey
+        Default                = $Palette.fg
+        Emphasis               = $Palette.orange
+        Error                  = $Palette.red
+        InlinePrediction       = $Palette.dim
+        Keyword                = $Palette.purple
+        ListPrediction         = $Palette.grey
+        ListPredictionSelected = $Palette.selBg + $Palette.fg
+        Member                 = $Palette.fg
+        Number                 = $Palette.purple
+        Operator               = $Palette.aqua
+        Parameter              = $Palette.blue
+        Selection              = $Palette.selBg + $Palette.fg
+        String                 = $Palette.yellow
+        Type                   = $Palette.orange
+        Variable               = $Palette.fg
     }
 
     # Tab abre el menú de completado en vez de ciclar a ciegas.

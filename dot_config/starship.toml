@@ -10,7 +10,7 @@
 #   ❯
 
 add_newline = true
-palette = 'everforest'
+palette = 'onedark'
 command_timeout = 1000
 scan_timeout = 30
 
@@ -33,23 +33,23 @@ $line_break\
 $character"""
 
 # ── Paleta ───────────────────────────────────────────────────────────────
-# Debe coincidir con dot_config/wezterm/colors.lua (Everforest dark medium).
-[palettes.everforest]
-fg     = '#d3c6aa'
-grey   = '#7a8478'
-grey2  = '#9da9a0'
-red    = '#e67e80'
-orange = '#e69875'
-yellow = '#dbbc7f'
-green  = '#a7c080'
-aqua   = '#83c092'
-blue   = '#7fbbb3'
-purple = '#d699b6'
+# Debe coincidir con dot_config/wezterm/colors.lua (One Dark Pro).
+[palettes.onedark]
+fg     = '#abb2bf'
+grey   = '#5c6370'
+grey2  = '#828997'
+red    = '#e06c75'
+orange = '#d19a66'
+yellow = '#e5c07b'
+green  = '#98c379'
+aqua   = '#56b6c2'
+blue   = '#61afef'
+purple = '#c678dd'
 
 # ── Línea 1: contexto ────────────────────────────────────────────────────
 
 [directory]
-style = 'bold green'
+style = 'bold blue'
 format = '[$path]($style)[$read_only]($read_only_style) '
 truncation_length = 3
 truncation_symbol = '…/'

@@ -9,15 +9,47 @@ local M = {}
 
 -- ┌──────────────────────────────────────────────────────────────────────┐
 -- │ CAMBIA EL TEMA AQUÍ                                                  │
--- │   'everforest' | 'rose-pine' | 'gruvbox-material' | 'catppuccin'     │
+-- │   'onedark' | 'everforest' | 'rose-pine' | 'gruvbox-material'        │
+-- │   'catppuccin'                                                       │
 -- └──────────────────────────────────────────────────────────────────────┘
-M.flavor = 'everforest'
+M.flavor = 'onedark'
 
 -- Sigue la apariencia del sistema (claro/oscuro). Ponlo en 'dark' o 'light'
 -- para forzar una variante concreta.
 M.appearance = 'auto'
 
+-- Cada paleta define los colores de UI (bg*, fg, grey*, rojo/verde/…) y,
+-- opcionalmente, `ansi` y `brights` explícitos. Merece la pena definirlos:
+-- los TUIs (opencode, claude code, herdr, pi) construyen su jerarquía visual
+-- con los 16 colores ANSI, así que conviene que sean los "de verdad" del tema
+-- y no una derivación de los colores de UI.
 M.palettes = {
+  ['onedark'] = {
+    dark = { -- One Dark Pro
+      bg0 = '#282c34', bg1 = '#21252b', bg2 = '#2c313c', bg3 = '#3e4451',
+      bg4 = '#4b5263', bg_visual = '#3e4451', bg_dim = '#1b1f27',
+      fg = '#abb2bf', grey0 = '#5c6370', grey1 = '#828997', grey2 = '#9da5b4',
+      red = '#e06c75', orange = '#d19a66', yellow = '#e5c07b',
+      green = '#98c379', aqua = '#56b6c2', blue = '#61afef', purple = '#c678dd',
+      -- Los 16 ANSI tal cual los define el tema de VS Code.
+      ansi = {
+        '#3f4451', '#e05561', '#8cc265', '#d18f52',
+        '#4aa5f0', '#c162de', '#42b3c2', '#d7dae0',
+      },
+      brights = {
+        '#4f5666', '#ff616e', '#a5e075', '#f0a45d',
+        '#4dc4ff', '#de73ff', '#4cd1e0', '#e6e6e6',
+      },
+    },
+    light = { -- One Light
+      bg0 = '#fafafa', bg1 = '#f0f0f1', bg2 = '#eaeaeb', bg3 = '#dbdbdc',
+      bg4 = '#c9c9ca', bg_visual = '#e5e5e6', bg_dim = '#eaeaeb',
+      fg = '#383a42', grey0 = '#a0a1a7', grey1 = '#8b8c92', grey2 = '#696c77',
+      red = '#e45649', orange = '#c18401', yellow = '#986801',
+      green = '#50a14f', aqua = '#0184bc', blue = '#4078f2', purple = '#a626a4',
+    },
+  },
+
   ['everforest'] = {
     dark = {
       bg0 = '#2d353b', bg1 = '#343f44', bg2 = '#3d484d', bg3 = '#475258',
@@ -119,26 +151,13 @@ function M.apply(config)
     scrollbar_thumb = p.bg3,
     split = p.bg3,
 
-    -- Sin blancos ni negros puros: menos deslumbramiento en sesiones largas.
-    ansi = {
-      p.bg2,   -- black
-      p.red,
-      p.green,
-      p.yellow,
-      p.blue,
-      p.purple,
-      p.aqua,
-      p.fg,    -- white
+    -- Si la paleta trae sus 16 ANSI propios se usan tal cual; si no, se
+    -- derivan de los colores de UI.
+    ansi = p.ansi or {
+      p.bg2, p.red, p.green, p.yellow, p.blue, p.purple, p.aqua, p.fg,
     },
-    brights = {
-      p.grey0,
-      p.red,
-      p.green,
-      p.yellow,
-      p.blue,
-      p.purple,
-      p.aqua,
-      p.grey2,
+    brights = p.brights or {
+      p.grey0, p.red, p.green, p.yellow, p.blue, p.purple, p.aqua, p.grey2,
     },
 
     compose_cursor = p.orange,
@@ -179,6 +198,8 @@ function M.apply(config)
     },
   }
 
+  -- La barra de pestañas no debe heredar la transparencia de la ventana:
+  -- con fondo propio se lee bien encima de cualquier cosa.
   config.window_frame = {
     font = wezterm.font({ family = 'JetBrainsMono Nerd Font', weight = 'Medium' }),
     font_size = 10.0,
